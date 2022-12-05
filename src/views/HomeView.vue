@@ -137,8 +137,6 @@ export default {
       conferenceKuid: '',
       userName: '',
       conferenceFilter: '',
-      // user_uid: '',
-      // userConference: '',
       dyscypliny: [
         { tytul: 'Wszystkie' },
         { tytul: 'Biologia' },
@@ -187,23 +185,6 @@ export default {
       });
       alert("deleted");
     },
-    findUserConference(){
-      // let userID = this.userConferences.data().uid
-
-        // console.log('find user:', this.conferenceKuid);
-      // const findUser = this.conferenceKuid.filter((this.conferenceKuid , this.userId) => {
-      //   if(this.conferenceKuid === this.userId){
-      //     db.collection("userProfile")
-      //         .doc(this.conferenceKuid)
-      //         .onSnapshot((doc) => {
-      //           this.userName = doc.data().name;
-      //
-      //           console.log('user:' , this.userName);
-      //         });
-      //   }
-      // })
-
-    },
     getDyscypliny(index){
       if(index === 'Wszystkie'){
         db.collection("konferencje")
@@ -234,7 +215,6 @@ export default {
   created() {
     this.getAllConferences();
     this.getUserName();
-    this.findUserConference();
   }
 
 }
