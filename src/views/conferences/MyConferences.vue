@@ -2,7 +2,9 @@
   <div v-if="userConferences">
     <!-- component -->
     <!-- This is an example component -->
-    <h1 class="text-3xl py-4 mt-2">Moje Konferencje</h1>
+
+    <h1 v-if="userConferences.length === 0" class="text-3xl py-4 mt-2">Aktualnie nie posiadasz zadnych konferencji</h1>
+    <h1 v-else class="text-3xl py-4 mt-2">Moje Konferencje</h1>
 
     <div class="w-3/4 m-auto mt-5 mb-5"  v-for="userConference in userConferences" v-bind:key="userConference.id">
     <div class="flex flex-col border rounded-lg overflow-hidden bg-white">
@@ -43,7 +45,7 @@
               <p class="flex items-center  text-gray-500">
                 <span class="font-semibold mr-2 text-xs uppercase text-xl">Miejscowosc:</span>
                 <span class="text-xl">{{ userConference.miejscowosc }}</span>
-                <span class="text-xl">{{ userConference.created }}</span>
+<!--                <span class="text-xl">{{ userConference.created }}</span>-->
               </p>
             </div>
 
@@ -138,8 +140,6 @@ export default {
              this.conferenceTitle = doc.data().conferenceTitle;
 
             });
-                console.log('dsd');
-                console.log('konferencje', this.userConferences);
           })
         }
       });
@@ -151,7 +151,6 @@ export default {
               .doc(user.uid)
               .onSnapshot((doc) => {
                 this.userProfile = doc.data();
-                console.log(this.userProfile);
               });
         } else {
           this.userProfile = null;
@@ -159,18 +158,15 @@ export default {
       });
     },
     removeConference(doc){
-        console.log(doc.kid)
           db.collection("konferencje")
               .doc(doc)
               .delete();
-          console.log("delete goal with ID: ");
           alert(doc.kid);
       alert("deleted");
     },
     checkForLogInUser(){
       firebase.auth().onAuthStateChanged((user) => {
         this.user_uid =  user.uid;
-        console.log(this.user_uid);
       })
     }
   },

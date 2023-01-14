@@ -48,7 +48,6 @@ export default {
           let docRef = db.collection('konferencje').doc(this.kid)
           docRef.get().then((doc) => {
             if (doc.exists) {
-              console.log("Document data:", doc.data());
               this.conference = doc.data();
             } else {
               // doc.data() will be undefined in this case

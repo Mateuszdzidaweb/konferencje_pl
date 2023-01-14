@@ -2,18 +2,22 @@
   <div v-if="userConferences">
     <div>
       <!--      <h1 @click="getBiologia">{{ biologia }}</h1>-->
-      <div class="flex flex-row justify-center py-5">
+      <div class="flex flex-row justify-center py-5 flex-wrap">
         <button
             id="btnFilter"
-            class="p-2 ml-2 mr-2 pl-5 pr-5 bg-transparent border-2 border-indigo-500 text-indigo-500 text-lg rounded-lg transition-colors duration-700 transform hover:bg-indigo-500 hover:text-gray-100 focus:border-4 focus:border-indigo-300 focus:bg-indigo-500 focus:text-gray-100"
+            class="p-2 mt-2 ml-2 mr-2 pl-5 pr-5 bg-transparent border-2 border-indigo-500 text-indigo-500 text-lg rounded-lg transition-colors duration-700 transform hover:bg-indigo-500 hover:text-gray-100 focus:border-4 focus:border-indigo-300 focus:bg-indigo-500 focus:text-gray-100"
             @click="getDyscypliny(dyscyplina.tytul)"  v-for="dyscyplina in dyscypliny" :key="dyscyplina.tytul" :class="dyscyplina.tytul">
           {{ dyscyplina.tytul }}
         </button>
       </div>
     </div>
+
+    <span v-if="userConferences.length === 0"  class="text-xl">Nie ma konferecni o tej dyscyplinie</span>
+
     <!-- component -->
     <!-- This is an example component -->
     <div class="w-3/4 m-auto mt-5 mb-5"  v-for="userConference in userConferences" v-bind:key="userConference.id">
+
       <div class="flex flex-col border rounded-lg overflow-hidden bg-white">
         <div class="grid grid-cols-1 sm:grid-cols-4">
           <div class="flex flex-col border-b sm:border-b-0 items-center p-8 sm:px-4 sm:h-full sm:justify-center">
@@ -23,6 +27,7 @@
             <div class="flex flex-col space-y-4  p-6 text-gray-600">
 
               <div class="flex flex-row text-sm">
+
 
                 <p class="flex items-center  text-gray-500">
                   <span class="font-semibold mr-2 text-xl uppercase">Tytul:</span>
@@ -83,7 +88,7 @@
                     </div>
                     Update
                   </a>
-                  <a  v-on:click="removeConference(userConference.kid)"
+                  <a v-if="currentUserID === userConference.kuid "  v-on:click="removeConference(userConference.kid)"
                       class="cursor-pointer uppercase text-xs flex flex-row items-center justify-center font-semibold">
                     <div class="mr-2">
                       <svg xmlns="http://www.w3.org/2000/svg" height="20px"
@@ -131,34 +136,35 @@ export default {
     return {
       btnID:'',
       isActive: false,
-      userConferences:[],
+      userConferences: 0,
       conferenceTitle: '',
       userId: '',
       conferenceKuid: '',
+      currentUserID: '',
       userName: '',
-      conferenceFilter: '',
+      conferenceFilter: [],
       dyscypliny: [
         { tytul: 'Wszystkie' },
         { tytul: 'Biologia' },
         { tytul: 'Filozofia' },
-        { tytul: 'Finanse' }
+        { tytul: 'Finanse' },
+        { tytul: 'Farmacja' },
+        { tytul: 'Ekologia' },
+        { tytul: 'Psychologia' },
+        { tytul: 'Fizyka' },
+        { tytul: 'Ekonomia' },
+
       ],
     };
   },
   methods:{
     getAllConferences(){
           db.collection("konferencje")
-              // .doc(user.uid)
-              // .collection("konferencje")
               .onSnapshot((querySnapshot) => {
                 this.userConferences = [];
                 querySnapshot.forEach((doc) => {
                   this.userConferences.push(doc.data());
-                  // this.conferenceKuid = this.userConferences.data().;
-
                 });
-                console.log('dsd');
-                console.log('konferencje', this.userConferences);
               });
     },
     getUserName(){
@@ -168,61 +174,72 @@ export default {
                     querySnapshot.forEach((doc) => {
                       this.userId.push(doc.id);
                     });
-                console.log('users:' , this.userId);
               });
     },
     removeConference(doc){
       firebase.auth().onAuthStateChanged((user) => {
         if (user) {
-          db.collection("npm run sefve")
-              .doc(user.uid)
-              .collection("konferencje")
-              .doc(doc)
-              .delete();
-          console.log("delete goal with ID: ");
-          // alert(doc.kid);
+          if (confirm("Czy napewno chcesz usunac konferencje?") == true) {
+            db.collection("konferencje")
+                .doc(doc)
+                .delete();
+          } else {
+            false;
+          }
         }
       });
-      alert("deleted");
     },
-    getDyscypliny(index){
-      if(index === 'Wszystkie'){
-        db.collection("konferencje")
-            .onSnapshot((querySnapshot) => {
-              this.conferenceFilter = [];
-              querySnapshot.forEach((doc) => {
-                this.conferenceFilter.push(doc.data());
-                this.userConferences = this.conferenceFilter;
-              });
-            });
-      }else{
-        db.collection("konferencje").where('dyscyplia', '==' ,index)
-            // .doc(user.uid)
-            // .collection("konferencje")
-            .onSnapshot((querySnapshot) => {
-              this.conferenceFilter = [];
-              querySnapshot.forEach((doc) => {
-                this.conferenceFilter.push(doc.data());
-                this.userConferences = this.conferenceFilter;
-                console.log('active:' ,this.isActive);
-              });
-            });
-        console.log('filter', this.conferenceFilter);
-      }
-      }
+    getDyscypliny(index) {
+      let availableDiscipline = ['Wszystkie'];
 
+      db.collection("konferencje")
+          .onSnapshot((querySnapshot) => {
+            this.conferenceFilter = [];
+            querySnapshot.forEach((doc) => {
+              this.conferenceFilter.push(doc.data());
+
+              for (let i = 0; i < this.conferenceFilter.length; i++) {
+                let obj = this.conferenceFilter[i];
+                for (let key in obj) {
+                  let value = obj[key];
+                  if (key === 'dyscyplia') {
+                    availableDiscipline.push(value);
+                  }
+                }
+              }
+              this.userConferences = this.conferenceFilter;
+            });
+            let availableDisciplineNoDuplicates = [...new Set(availableDiscipline)];
+            if (availableDisciplineNoDuplicates.indexOf(index) === -1) {
+              this.conferenceFilter = [];
+              this.userConferences = this.conferenceFilter;
+            } else {
+              db.collection("konferencje").where('dyscyplia', '==', index)
+
+                  .onSnapshot((querySnapshot) => {
+                    this.conferenceFilter = [];
+                    querySnapshot.forEach((doc) => {
+                      this.conferenceFilter.push(doc.data());
+                      this.userConferences = this.conferenceFilter;
+                    });
+                  });
+            }
+          });
+    },
+    getCurrentLoggedInUserID(){
+      firebase.auth().onAuthStateChanged((user) => {
+        this.currentUserID = user.uid;
+      })
+    }
   },
   created() {
+    this.getCurrentLoggedInUserID()
     this.getAllConferences();
     this.getUserName();
   }
-
 }
 </script>
 
 <style lang="css">
 
-.active{
-  background: red !important;
-}
 </style>

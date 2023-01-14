@@ -34,6 +34,11 @@
               <option value="Ekonomia">Ekonomia</option>
               <option value="Finanse">Finanse</option>
               <option value="Biologia">Biologia</option>
+              <option value="Ekologia">Ekologia</option>
+              <option value="Farmacja">Farmacja</option>
+              <option value="Psychologia">Psychologia</option>
+              <option value="Fizyka">Fizyka</option>
+              <option value="Ekonomia">Ekonomia</option>
             </select>
           </div>
           <div class="mb-5">
@@ -129,8 +134,23 @@ export default {
   methods:{
     add_conference(e){
       e.preventDefault()
-      const input = document.querySelector('input')
-      if(input.value !== ''){
+      const input = document.querySelector('input');
+
+      let d = new Date(),
+          month = '' + (d.getMonth() + 1),
+          day = '' + d.getDate(),
+          year = d.getFullYear();
+
+      if (month.length < 2)
+        month = '0' + month;
+      if (day.length < 2)
+        day = '0' + day;
+
+      let today = [year, month, day].join('-');
+
+      if (this.data_konferecnji <= today) {
+        alert("Niepoprawna data Konferencji");
+      }else if(input.value !== ''){
         firebase.auth().onAuthStateChanged((user) =>{
           db.collection('konferencje')
               .add({
@@ -151,9 +171,8 @@ export default {
                     .update({
                       kid: this.kid,
                     })
-                console.log(this.kid);
 
-                this.$router.replace('/');
+                this.$router.replace('/my-conferences');
               })
               .catch((error) =>{
                 console.log("Error writing conference ", error);
@@ -162,12 +181,9 @@ export default {
       }else {
         alert('Prosze Wypelnic forme konferencji')
       }
-
-
     },
   },
   created(){
-    // this.current_date = new Date(Date.now()).toLocaleString();
   }
 }
 </script>
