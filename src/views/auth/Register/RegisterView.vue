@@ -13,7 +13,7 @@
           <div class="flex-auto px-4 lg:px-10 py-10 pt-0">
             <form>
               <div class="relative w-full mb-3">
-                <label class="block uppercase text-blueGray-600 text-xs font-bold mb-2" for="grid-password">Imie</label>
+                <label class="block uppercase text-blueGray-600 text-xs font-bold mb-2" for="grid-password">Imię</label>
                 <input v-model="name" type="email" class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" placeholder="Email">
               </div>
               <div class="relative w-full mb-3">
@@ -21,7 +21,7 @@
                 <input v-model="email" type="email" class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" placeholder="Email">
               </div>
               <div class="relative w-full mb-3">
-                <label class="block uppercase text-blueGray-600 text-xs font-bold mb-2" for="password">Haslo</label>
+                <label class="block uppercase text-blueGray-600 text-xs font-bold mb-2" for="password">Hasło</label>
                 <input v-model="password" type="password" class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" placeholder="Password">
               </div>
               <div class="text-center mt-6">

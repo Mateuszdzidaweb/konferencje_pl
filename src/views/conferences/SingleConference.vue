@@ -9,7 +9,7 @@
      <h3 class="flex flex-row justify-start text-2xl ml-2">{{ conference.dyscyplia}}</h3>
    </div>
       <div class="flex flex-row py-2">
-        <h3 class="flex justify-start text-2xl">Miejscowosc: </h3>
+        <h3 class="flex justify-start text-2xl">Miejscowość: </h3>
         <h3 class="flex flex-row justify-start text-2xl ml-2">{{ conference.miejscowosc}}</h3>
       </div>
       <div class="flex flex-row py-2">
@@ -17,8 +17,16 @@
         <h3 class="flex flex-row justify-start text-2xl ml-2">{{ conference.miejsce_konferencji}}</h3>
       </div>
       <div class="flex flex-row py-2">
-        <h3 class="flex justify-start text-2xl">Data Konferenci: </h3>
+        <h3 class="flex justify-start text-2xl">Data Rozpoczecia Konferenci: </h3>
         <h3 class="flex flex-row justify-start text-2xl ml-2">{{ conference.data_konferecnji}}</h3>
+      </div>
+      <div class="flex flex-row py-2">
+        <h3 class="flex justify-start text-2xl">Organizator: </h3>
+        <h3 class="flex flex-row justify-start text-2xl ml-2">{{ conference.organizator}}</h3>
+      </div>
+      <div class="flex flex-row py-2">
+        <h3 class="flex justify-start text-2xl">Kontakt: </h3>
+        <h3 class="flex flex-row justify-start text-2xl ml-2">{{ conference.kontakt}}</h3>
       </div>
 
 
@@ -26,7 +34,7 @@
         {{ conference.opis}}
       </p>
       <button @click="$router.back()" type="button" class=" inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out">
-        Back</button>
+        Wróć</button>
     </div>
   </div>
 
@@ -63,22 +71,3 @@ export default {
   }
 }
 </script>
-
-<!--firebase.auth().onAuthStateChanged((user) => {-->
-<!--if (user) {-->
-<!--db.collection("konferencjeUzytkownika")-->
-<!--.doc(user.uid)-->
-<!--.collection("konferencje")-->
-<!--.doc(this.kid)-->
-<!--.onSnapshot((querySnapshot) => {-->
-<!--this.userConferences = [];-->
-<!--querySnapshot.forEach((doc) => {-->
-<!--this.userConferences.push(doc.data());-->
-<!--this.conferenceTitle = doc.data().conferenceTitle;-->
-
-<!--});-->
-<!--console.log('dsd');-->
-<!--console.log('konferencje', this.userConferences);-->
-<!--})-->
-<!--}-->
-<!--});-->

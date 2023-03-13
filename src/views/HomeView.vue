@@ -26,32 +26,46 @@
           <div class="flex flex-col sm:border-l col-span-3">
             <div class="flex flex-col space-y-4  p-6 text-gray-600">
 
+<!--              <div v-if="currentUserID" v-on:click="addToFavorites(userConference.kid)">-->
+<!--                <h1>Add to favorites</h1>-->
+<!--              </div>-->
+
               <div class="flex flex-row text-sm">
-
-
                 <p class="flex items-center  text-gray-500">
-                  <span class="font-semibold mr-2 text-xl uppercase">Tytul:</span>
+                  <span class="font-semibold mr-2 text-xs uppercase text-xl">Tytuł:</span>
                   <span class="text-xl">{{ userConference.tytul }}</span>
                 </p>
               </div>
               <div class="flex flex-row text-sm">
                 <p class="flex items-center  text-gray-500">
-                  <span class="font-semibold mr-2 text-xl uppercase">Dyscyplia:</span>
+                  <span class="font-semibold mr-2 text-xs uppercase text-xl">Dyscyplina:</span>
                   <span class="text-xl">{{ userConference.dyscyplia }}</span>
                 </p>
               </div>
 
               <div class="flex flex-row text-sm">
                 <p class="flex items-center  text-gray-500">
-                  <span class="font-semibold mr-2 text-xl uppercase">Miejsce Konferencji:</span>
+                  <span class="font-semibold mr-2 text-xs uppercase text-xl">Miejsce Konferencji:</span>
                   <span class="text-xl">{{ userConference.miejsce_konferencji }}</span>
                 </p>
               </div>
               <div class="flex flex-row text-sm">
                 <p class="flex items-center  text-gray-500">
-                  <span class="font-semibold mr-2 text-xl uppercase">Miejscowosc</span>
-                  <span class="text-xl">{{ userConference.miejscowosc
-                    }}</span>
+                  <span class="font-semibold mr-2 text-xs uppercase text-xl">Miejscowość</span>
+                  <span class="text-xl">{{ userConference.miejscowosc }}</span>
+                </p>
+              </div>
+
+              <div class="flex flex-row text-sm">
+                <p class="flex items-center  text-gray-500">
+                  <span class="font-semibold mr-2 text-xs uppercase text-xl">Organizator</span>
+                  <span class="text-xl">{{ userConference.organizator }}</span>
+                </p>
+              </div>
+              <div class="flex flex-row text-sm">
+                <p class="flex items-center  text-gray-500">
+                  <span class="font-semibold mr-2 text-xs uppercase text-xl">Kontakt</span>
+                  <span class="text-xl">{{ userConference.kontakt }}</span>
                 </p>
               </div>
 
@@ -76,7 +90,7 @@
               <div class="flex flex-col w-full relative bottom-0">
                 <div
                     class="grid grid-cols-3 border-t divide-x text-gray-500  bg-gray-50 dark:bg-transparent py-3">
-                  <a
+                  <a v-if="currentUserID === userConference.kuid "
                       class=" cursor-pointer uppercase text-xs flex flex-row items-center justify-center font-semibold">
                     <div class="mr-2">
                       <svg xmlns="http://www.w3.org/2000/svg" height="20px"
@@ -86,7 +100,7 @@
                             d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
                       </svg>
                     </div>
-                    Update
+                    Edytuj
                   </a>
                   <a v-if="currentUserID === userConference.kuid "  v-on:click="removeConference(userConference.kid)"
                       class="cursor-pointer uppercase text-xs flex flex-row items-center justify-center font-semibold">
@@ -98,7 +112,7 @@
                             d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM8 9h8v10H8V9zm7.5-5l-1-1h-5l-1 1H5v2h14V4z" />
                       </svg>
                     </div>
-                    Remove
+                    Usuń
                   </a>
                   <router-link :to="{ name: 'SingleConference', params: { kid: userConference.kid } }"
                                class="cursor-pointer uppercase text-xs flex flex-row items-center justify-center font-semibold">
@@ -110,7 +124,7 @@
                             d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z" />
                       </svg>
                     </div>
-                    View
+                    Zobacz szczegóły
 
                   </router-link>
                 </div>
@@ -143,6 +157,10 @@ export default {
       currentUserID: '',
       userName: '',
       conferenceFilter: [],
+      user_id: '',
+      favorite_conference_id: [],
+      favorite_doc_id: '',
+      favorite_doc_exist: null,
       dyscypliny: [
         { tytul: 'Wszystkie' },
         { tytul: 'Biologia' },
@@ -230,6 +248,124 @@ export default {
       firebase.auth().onAuthStateChanged((user) => {
         this.currentUserID = user.uid;
       })
+    },
+
+    addToFavorites() {
+      // conference_id
+      // const favorite_ref = db.collection('favorites').doc()
+      // const doc = favorite_ref.get();
+      // console.log(doc);
+      // if (!doc) {
+      //   console.log('No such document!');
+      // } else {
+      //   console.log('Document data:', doc.data());
+      // }
+      //
+      // if(doc !== this.favorite_doc_exist){
+      // this.favorite_doc_exist = null;
+
+      // db.collection("favorites").where('user_id', "==", this.currentUserID)
+      //
+      //     .onSnapshot((querySnapshot) => {
+      //       querySnapshot.forEach((doc) => {
+      //
+      //
+      //         this.favorite_doc_exist = doc.data().favorite_doc_id;
+      //         console.log(this.favorite_doc_exist);
+      //         console.log('check ', this.favorite_doc_exist);
+      //
+      //
+      //
+      //       });
+      //     })
+      //
+      // if(this.favorite_doc_exist !== null){
+      //   console.log('exist')
+      // }else {
+      //   console.log('dont exist')
+      // }
+
+      // db.collection('favorites').doc(this.favorite_doc_exist)
+      //     .onSnapshot((querySnapshot) => {
+      //       querySnapshot.forEach((doc) => {
+      //         // this.favorite_doc_exist = null;
+      //
+      //         console.log(doc.data());
+      //
+      //         if (this.favorite_doc_exist !== null) {
+      //           console.log('exist')
+      //         } else {
+      //           console.log('dont exist')
+      //         }
+      //
+      //       })
+      //       });
+      //
+
+
+
+     //
+     // db.collection('favorites').doc(  this.favorite_doc_exist).get()
+     //  .then((docData) => {
+     //    // console.log(())
+     //    if (docData != null ) {
+     //      // document exists (online/offline)
+     //      console.log('exist')
+     //    } else {
+     //      // document does not exist (only on online)
+     //      console.log('dont exist')
+     //    }
+     //  })
+      // db.collection("favorites").where('user_id', "==", this.currentUserID)
+      //     .onSnapshot((querySnapshot) => {
+      //       querySnapshot.forEach((doc) => {
+      //          this.favorite_doc_exist = doc.data().favorite_doc_id;
+      //
+      //
+      //           // console.log(db.collection('favorites').doc(this.favorite_doc_exist));
+      //           db.collection('favorites')
+      //               .doc(this.favorite_doc_exist)
+      //               .update({
+      //                 favorite_conference_id: firebase.firestore.FieldValue.arrayUnion(conference_id)
+      //
+      //               })
+      //           console.log('a ', this.favorite_doc_exist);
+      //
+      //       });
+      //
+      //     })
+      // }
+      // else {
+      //   console.log('else');
+      //
+      // }
+
+      // firebase.auth().onAuthStateChanged(() => {
+      //   // if()
+      //   db.collection('favorites')
+      //       .add({
+      //         user_id: this.currentUserID,
+      //         favorite_conference_id: {
+      //           conference_id
+      //         },
+      //       })
+      //       .then((docRef) => {
+      //         this.favorite_doc_id = docRef.id
+      //         db.collection('favorites')
+      //             .doc(this.favorite_doc_id)
+      //             .update({
+      //               favorite_doc_id: this.favorite_doc_id,
+      //             })
+      //             .catch((error) => {
+      //               console.log("Error Adding to favorites ", error);
+      //             });
+      //         console.log('added to favorites');
+      //       });
+      // })
+
+
+
+
     }
   },
   created() {

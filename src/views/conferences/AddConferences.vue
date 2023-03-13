@@ -11,7 +11,7 @@
                 for="tytul"
                 class="mb-3 block text-base font-medium text-[#07074D]"
             >
-              Tytul
+              Tytuł
             </label>
             <input v-model="tytul"
 
@@ -23,6 +23,44 @@
                    required
             />
           </div>
+
+
+          <div class="mb-5">
+            <label
+                for="tytul"
+                class="mb-3 block text-base font-medium text-[#07074D]"
+            >
+              Oraganizator
+            </label>
+            <input v-model="organizator"
+
+                   type="text"
+                   name="organizator"
+                   id="organizator"
+                   placeholder="organizator"
+                   class="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
+                   required
+            />
+          </div>
+
+          <div class="mb-5">
+            <label
+                for="tytul"
+                class="mb-3 block text-base font-medium text-[#07074D]"
+            >
+              Kontakt
+            </label>
+            <input v-model="kontakt"
+
+                   type="text"
+                   name="kontakt"
+                   id="kontakt"
+                   placeholder="kontakt"
+                   class="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
+                   required
+            />
+          </div>
+
           <div class="mb-5">
             <label for="dyscyplina">Wybierz dyscypline</label>
 
@@ -46,7 +84,7 @@
                 for="miejsce_konferencji"
                 class="mb-3 block text-base font-medium text-[#07074D]"
             >
-              Nazwa miejsca konferencji
+              Nazwa miejsca konferencji (adres)
             </label>
             <input v-model="miejsce_konferencji"
                    required
@@ -62,7 +100,7 @@
                 for="miejscowosc"
                 class="mb-3 block text-base font-medium text-[#07074D]"
             >
-              Miejscowosc
+              Miejscowość
             </label>
             <input v-model="miejscowosc"
                    required
@@ -74,7 +112,7 @@
             />
           </div>
         <div class="mb-5">
-          <label for="start">Data Konferencji</label>
+          <label for="start">Data rozpoczęcia konferencji</label>
 
           <input v-model="data_konferecnji" type="date" id="start" name="trip-start"
                  required
@@ -127,6 +165,8 @@ export default {
       opis: null,
       current_date:null,
       data_dodania: null,
+      organizator: null,
+      kontakt: null,
       kid: '',
       created: '',
     }
@@ -158,6 +198,8 @@ export default {
                 dyscyplia: this.dyscyplina,
                 miejsce_konferencji: this.miejsce_konferencji,
                 miejscowosc: this.miejscowosc,
+                organizator: this.organizator,
+                kontakt: this.kontakt,
                 data_konferecnji: this.data_konferecnji,
                 opis: this.opis,
                 data_dodania: firebase.firestore.FieldValue.serverTimestamp(),
