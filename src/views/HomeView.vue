@@ -26,9 +26,12 @@
           <div class="flex flex-col sm:border-l col-span-3">
             <div class="flex flex-col space-y-4  p-6 text-gray-600">
 
-<!--              <div v-if="currentUserID" v-on:click="addToFavorites(userConference.kid)">-->
-<!--                <h1>Add to favorites</h1>-->
-<!--              </div>-->
+              <div v-if="currentUserID" v-on:click="addToFavorites(userConference.kid)">
+                <h1>Add to favorites</h1>
+              </div>
+              <div v-if="currentUserID" v-on:click="addToFavorites(userConference.kid)">
+                <h1>Remove from favorites</h1>
+              </div>
 
               <div class="flex flex-row text-sm">
                 <p class="flex items-center  text-gray-500">
@@ -161,6 +164,7 @@ export default {
       favorite_conference_id: [],
       favorite_doc_id: '',
       favorite_doc_exist: null,
+      userFavoriteExist: null,
       dyscypliny: [
         { tytul: 'Wszystkie' },
         { tytul: 'Biologia' },
@@ -250,7 +254,7 @@ export default {
       })
     },
 
-    addToFavorites() {
+    addToFavorites(conference_id) {
       // conference_id
       // const favorite_ref = db.collection('favorites').doc()
       // const doc = favorite_ref.get();
@@ -264,6 +268,11 @@ export default {
       // if(doc !== this.favorite_doc_exist){
       // this.favorite_doc_exist = null;
 
+      //
+      // Add favorite conference to array
+      this.favorite_conference_id.push(conference_id)
+      console.log(this.favorite_conference_id)
+      //
       // db.collection("favorites").where('user_id', "==", this.currentUserID)
       //
       //     .onSnapshot((querySnapshot) => {
@@ -271,8 +280,8 @@ export default {
       //
       //
       //         this.favorite_doc_exist = doc.data().favorite_doc_id;
-      //         console.log(this.favorite_doc_exist);
-      //         console.log('check ', this.favorite_doc_exist);
+      //         // console.log(this.favorite_doc_exist);
+      //         // console.log('check ', this.favorite_doc_exist);
       //
       //
       //
@@ -304,7 +313,7 @@ export default {
 
 
 
-     //
+
      // db.collection('favorites').doc(  this.favorite_doc_exist).get()
      //  .then((docData) => {
      //    // console.log(())
@@ -316,52 +325,94 @@ export default {
      //      console.log('dont exist')
      //    }
      //  })
-      // db.collection("favorites").where('user_id', "==", this.currentUserID)
-      //     .onSnapshot((querySnapshot) => {
-      //       querySnapshot.forEach((doc) => {
-      //          this.favorite_doc_exist = doc.data().favorite_doc_id;
-      //
-      //
-      //           // console.log(db.collection('favorites').doc(this.favorite_doc_exist));
-      //           db.collection('favorites')
-      //               .doc(this.favorite_doc_exist)
-      //               .update({
-      //                 favorite_conference_id: firebase.firestore.FieldValue.arrayUnion(conference_id)
-      //
-      //               })
-      //           console.log('a ', this.favorite_doc_exist);
-      //
-      //       });
-      //
-      //     })
-      // }
+
+
       // else {
       //   console.log('else');
       //
       // }
 
-      // firebase.auth().onAuthStateChanged(() => {
-      //   // if()
-      //   db.collection('favorites')
-      //       .add({
-      //         user_id: this.currentUserID,
-      //         favorite_conference_id: {
-      //           conference_id
-      //         },
-      //       })
-      //       .then((docRef) => {
-      //         this.favorite_doc_id = docRef.id
-      //         db.collection('favorites')
-      //             .doc(this.favorite_doc_id)
-      //             .update({
-      //               favorite_doc_id: this.favorite_doc_id,
-      //             })
-      //             .catch((error) => {
-      //               console.log("Error Adding to favorites ", error);
-      //             });
-      //         console.log('added to favorites');
-      //       });
-      // })
+      // const usersDocExit = db.collection('favorites').doc()
+      // usersDocExit.get()
+      //     .then((docSnapshot) => {
+      //       this.userFavoriteExist = docSnapshot.exists;
+      //
+      //       console.log('user Favorite Exist',this.userFavoriteExist);
+      //   })
+
+
+          db.collection("favorites").doc()
+              .onSnapshot((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                 let user_have_favorite_collection = doc.data().user_id;
+
+                 console.log(' user have favorite collection ',user_have_favorite_collection);
+
+                });
+              })
+
+
+
+
+      // Check if favorite collection is not empty
+      const usersRef = db.collection('favorites')
+      usersRef.get()
+          .then((docSnapshot) => {
+            console.log(docSnapshot)
+            if (!docSnapshot.empty) {
+              console.log('document exist')
+
+
+              db.collection("favorites").where('user_id', "==", this.currentUserID)
+                  .onSnapshot((querySnapshot) => {
+                    querySnapshot.forEach((doc) => {
+                      this.favorite_doc_exist = doc.data().favorite_doc_id;
+
+
+                      // console.log(db.collection('favorites').doc(this.favorite_doc_exist));
+                      db.collection('favorites')
+                          .doc(this.favorite_doc_exist)
+                          .update({
+                            favorite_conference_id: firebase.firestore.FieldValue.arrayUnion(...this.favorite_conference_id)
+
+                          })
+                      console.log('Added to array', this.favorite_doc_exist);
+
+                    });
+                  })
+
+
+            } else {
+              // usersRef.set({...}) // create the document
+              console.log('no documents');
+              console.log(usersRef);
+              // // if()
+              db.collection('favorites')
+                  .add({
+                    user_id: this.currentUserID,
+                    favorite_conference_id: {
+                      conference_id
+                    },
+                  })
+                  .then((docRef) => {
+                    this.favorite_doc_id = docRef.id
+                    db.collection('favorites')
+                        .doc(this.favorite_doc_id)
+                        .update({
+                          favorite_doc_id: this.favorite_doc_id,
+                        })
+                        .catch((error) => {
+                          console.log("Error Adding to favorites ", error);
+                        });
+                    console.log('added to favorites');
+                  });
+
+            }
+          });
+
+/*      // firebase.auth().onAuthStateChanged(() => {
+
+      // })*/
 
 
 
