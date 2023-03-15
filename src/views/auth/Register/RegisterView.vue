@@ -56,7 +56,7 @@ export default {
             .createUserWithEmailAndPassword(this.email, this.password)
             .then(
                 (user) => {
-                  alert(`Account created for ${user.email}`);
+                  alert(`konto utworzone dla ${user.email}`);
                   console.log(user);
                   // Add a new document in collection "profiles"
                   db.collection("userProfile")
@@ -75,13 +75,12 @@ export default {
                   this.$router.replace("/login");
                 },
                 (err) => {
-                  alert("Sorry you could not sign up" + err.message);
+                  alert("wystąpił błąd spróbuj ponownie " + err.message);
                 }
             );
     },
   },
   mounted() {
-    console.log('registered mounted');
   }
 }
 </script>

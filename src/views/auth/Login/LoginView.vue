@@ -56,9 +56,9 @@ export default {
       })
       .catch((err) =>{
         if (err.code === "auth/wrong-password"){
-          alert("Haslo jest nie prawidlowe")
+          alert("Hasło jest nieprawidłowe")
         }else {
-          alert('Login lub Haslo jest nie prawidlowe, Sproboj ponownie');
+          alert('Login lub Hasło jest nieprawidłowe, spróbuj ponownie');
         }
       })
     }
