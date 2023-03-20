@@ -49,6 +49,14 @@ const routes = [
     component: () => import('../views/conferences/MyConferences')
   },
   {
+    path: '/favorites',
+    name: 'MyFavorites',
+    meta:{
+      requiresAuth: true,
+    },
+    component: () => import('../views/conferences/FavoritesConferences')
+  },
+  {
     path: '/single-conference/:kid',
     name: 'SingleConference',
     props: true,
@@ -56,6 +64,15 @@ const routes = [
       requiresAuth: false,
     },
     component: () => import('../views/conferences/SingleConference')
+  },
+  {
+    path: '/edit-conference/:kid',
+    name: 'EditConference',
+    props: true,
+    meta:{
+      requiresAuth: false,
+    },
+    component: () => import('../views/conferences/EditConference')
   },
 
 ]

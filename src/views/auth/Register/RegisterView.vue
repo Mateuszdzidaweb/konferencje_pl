@@ -64,6 +64,7 @@ export default {
                       .set({
                         name: this.name,
                         email: this.email,
+                        favorites: [],
                         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                       })
                       .then(() => {

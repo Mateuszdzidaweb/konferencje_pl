@@ -12,6 +12,7 @@
       </div>
     </div>
 
+
     <span v-if="userConferences.length === 0"  class="text-xl">Nie ma konferecni o tej dyscyplinie</span>
 
     <!-- component -->
@@ -25,13 +26,6 @@
           </div>
           <div class="flex flex-col sm:border-l col-span-3">
             <div class="flex flex-col space-y-4  p-6 text-gray-600">
-
-              <div v-if="userConference.favorites " v-on:click="addToFavorites(userConference.kid)">
-                <h1>Dodaj do ulubionych</h1>
-              </div>
-              <div v-if="userConference.favorites && isFavorite === true " v-on:click="addToFavorites(userConference.kid)">
-                <h1>Usun do ulubionych</h1>
-              </div>
 
               <div class="flex flex-row text-sm">
                 <p class="flex items-center  text-gray-500">
@@ -93,18 +87,6 @@
               <div class="flex flex-col w-full relative bottom-0">
                 <div
                     class="grid grid-cols-3 border-t divide-x text-gray-500  bg-gray-50 dark:bg-transparent py-3">
-                  <a v-if="currentUserID === userConference.kuid "
-                      class=" cursor-pointer uppercase text-xs flex flex-row items-center justify-center font-semibold">
-                    <div class="mr-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" height="20px"
-                           viewBox="0 0 24 24" width="20px" fill="#64748b">
-                        <path d="M0 0h24v24H0z" fill="none" />
-                        <path
-                            d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
-                      </svg>
-                    </div>
-                    Edytuj
-                  </a>
                   <a v-if="currentUserID === userConference.kuid "  v-on:click="removeConference(userConference.kid)"
                       class="cursor-pointer uppercase text-xs flex flex-row items-center justify-center font-semibold">
                     <div class="mr-2">
@@ -128,6 +110,19 @@
                       </svg>
                     </div>
                     Zobacz szczegóły
+
+                  </router-link>
+                  <router-link  v-if="currentUserID === userConference.kuid " :to="{ name: 'EditConference', params: { kid: userConference.kid } }"
+                               class="cursor-pointer uppercase text-xs flex flex-row items-center justify-center font-semibold">
+                    <div class="mr-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" height="20px"
+                           viewBox="0 0 24 24" width="20px" fill="#64748b">
+                        <path d="M0 0h24v24H0z" fill="none" />
+                        <path
+                            d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                      </svg>
+                    </div>
+                    Edytuj
 
                   </router-link>
                 </div>
@@ -165,8 +160,9 @@ export default {
       favorite_doc_id: '',
       favorite_doc_exist: null,
       userFavoriteExist: null,
-      userFavorite: ["V6Tk8tvyrUMLjYvTl8FpP16rfjt1"],
+      userFavorite: 'BupPNm3kwNIiE5C8oqx1',
       isFavorite: false,
+      UserConferences_ids: '',
       dyscypliny: [
         { tytul: 'Wszystkie' },
         { tytul: 'Biologia' },
@@ -186,13 +182,23 @@ export default {
           db.collection("konferencje")
               .onSnapshot((querySnapshot) => {
                 this.userConferences = [];
-                // this.userFavorite = [];
+                this.UserConferences_ids = []
+
                 querySnapshot.forEach((doc) => {
                   this.userConferences.push(doc.data());
-                  this.userFavorite = doc.data().ulubione;
-                  console.log('get all conference ', this.userFavorite);
+                  this.UserConferences_ids.push(doc.data().kid);
                 });
-              });
+
+                });
+    },
+    getAllConferences2(){
+      db.collection("konferencje")
+          .onSnapshot((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+            console.log('conference :', doc.id )
+              console.log('favorites :', this.userFavorite )
+            });
+          });
     },
     getUserName(){
           db.collection("userProfile")
@@ -256,226 +262,59 @@ export default {
     getCurrentLoggedInUserID(){
       firebase.auth().onAuthStateChanged((user) => {
         this.currentUserID = user.uid;
+        console.log('USER!!! ', user)
       })
     },
-    getUserFavorites(conference_id) {
-      firebase.auth().onAuthStateChanged((user) =>{
-        this.currentUserID = user.uid;
+    getUserFavorites() {
 
-        db.collection('konferencje')
-            .onSnapshot((querySnapshot) => {
-              querySnapshot.forEach((doc) => {
-                this.userFavorite = doc.data().favorites;
-                console.log('user favorite: ', this.userFavorite);
-               console.log(conference_id, ' conference id')
+      firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+          db.collection("userProfile")
+              .doc(user.uid)
+              .onSnapshot((doc) => {
+                this.userFavorite = doc.data();
+                console.log('user favorite conferences: ', this.userFavorite)
 
-
-
-                if(this.userFavorite.includes(this.currentUserID)){
-                  this.isFavorite = true;
-                  console.log('is favorite ', this.isFavorite)
-                }else{
-                  this.isFavorite = false;
-                }
               })
-
-            })
+        }
       })
-
-      // console.log('current user id: ', this.currentUserID)
-
-
 
     },
 
     addToFavorites(conference_id) {
 
 
-      this.favorite_conference_id.push(this.currentUserID)
-      console.log(this.currentUserID)
+      this.favorite_conference_id.push({key:conference_id, isFavorite:false})
+      console.log(this.favorite_conference_id)
 
       firebase.auth().onAuthStateChanged((user) => {
         this.currentUserID = user.uid;
-        db.collection('konferencje')
-            .doc(conference_id)
+        db.collection('userProfile')
+            .doc(user.uid)
             .update({
               favorites: firebase.firestore.FieldValue.arrayUnion(...this.favorite_conference_id)
             })
-            console.log('Added to array', this.favorite_doc_exist);
-
       });
 
-      this.getUserFavorites();
 
-      //
-
-
-      // conference_id
-      // const favorite_ref = db.collection('favorites').doc()
-      // const doc = favorite_ref.get();
-      // console.log(doc);
-      // if (!doc) {
-      //   console.log('No such document!');
-      // } else {
-      //   console.log('Document data:', doc.data());
-      // }
-      //
-      // if(doc !== this.favorite_doc_exist){
-      // this.favorite_doc_exist = null;
-
-      //
-      // Add favorite conference to array
-
-      // db.collection("favorites").where('user_id', "==", this.currentUserID)
-      //
-      //     .onSnapshot((querySnapshot) => {
-      //       querySnapshot.forEach((doc) => {
-      //
-      //
-      //         this.favorite_doc_exist = doc.data().favorite_doc_id;
-      //         // console.log(this.favorite_doc_exist);
-      //         // console.log('check ', this.favorite_doc_exist);
-      //
-      //
-      //
-      //       });
-      //     })
-      //
-      // if(this.favorite_doc_exist !== null){
-      //   console.log('exist')
-      // }else {
-      //   console.log('dont exist')
-      // }
-
-      // db.collection('favorites').doc(this.favorite_doc_exist)
-      //     .onSnapshot((querySnapshot) => {
-      //       querySnapshot.forEach((doc) => {
-      //         // this.favorite_doc_exist = null;
-      //
-      //         console.log(doc.data());
-      //
-      //         if (this.favorite_doc_exist !== null) {
-      //           console.log('exist')
-      //         } else {
-      //           console.log('dont exist')
-      //         }
-      //
-      //       })
-      //       });
-      //
-
-
-
-
-     // db.collection('favorites').doc(  this.favorite_doc_exist).get()
-     //  .then((docData) => {
-     //    // console.log(())
-     //    if (docData != null ) {
-     //      // document exists (online/offline)
-     //      console.log('exist')
-     //    } else {
-     //      // document does not exist (only on online)
-     //      console.log('dont exist')
-     //    }
-     //  })
-
-
-      // else {
-      //   console.log('else');
-      //
-      // }
-
-      // const usersDocExit = db.collection('favorites').doc()
-      // usersDocExit.get()
-      //     .then((docSnapshot) => {
-      //       this.userFavoriteExist = docSnapshot.exists;
-      //
-      //       console.log('user Favorite Exist',this.userFavoriteExist);
-      //   })
-
-
-          // db.collection("favorites").doc()
-          //     .onSnapshot((querySnapshot) => {
-          //       querySnapshot.forEach((doc) => {
-          //        let user_have_favorite_collection = doc.data().user_id;
-          //
-          //        console.log(' user have favorite collection ',user_have_favorite_collection);
-          //
-          //       });
-          //     })
-
-
-
-
-      // Check if favorite collection is not empty
-      // const usersRef = db.collection('favorites')
-      // usersRef.get()
-      //     .then((docSnapshot) => {
-      //       console.log(docSnapshot)
-      //       if (!docSnapshot.empty) {
-      //         console.log('document exist')
-      //
-      //
-      //         db.collection("favorites").where('user_id', "==", this.currentUserID)
-      //             .onSnapshot((querySnapshot) => {
-      //               querySnapshot.forEach((doc) => {
-      //                 this.favorite_doc_exist = doc.data().favorite_doc_id;
-      //
-      //
-      //                 // console.log(db.collection('favorites').doc(this.favorite_doc_exist));
-      //                 db.collection('favorites')
-      //                     .doc(this.favorite_doc_exist)
-      //                     .update({
-      //                       favorite_conference_id: firebase.firestore.FieldValue.arrayUnion(...this.favorite_conference_id)
-      //
-      //                     })
-      //                 console.log('Added to array', this.favorite_doc_exist);
-      //
-      //               });
-      //             })
-      //
-      //
-      //       } else {
-      //         // usersRef.set({...}) // create the document
-      //         console.log('no documents');
-      //         console.log(usersRef);
-      //         // // if()
-      //         db.collection('favorites')
-      //             .add({
-      //               user_id: this.currentUserID,
-      //               favorite_conference_id: {
-      //                 conference_id
-      //               },
-      //             })
-      //             .then((docRef) => {
-      //               this.favorite_doc_id = docRef.id
-      //               db.collection('favorites')
-      //                   .doc(this.favorite_doc_id)
-      //                   .update({
-      //                     favorite_doc_id: this.favorite_doc_id,
-      //                   })
-      //                   .catch((error) => {
-      //                     console.log("Error Adding to favorites ", error);
-      //                   });
-      //               console.log('added to favorites');
-      //             });
-      //
-      //       }
-      //     });
-
-/*      // firebase.auth().onAuthStateChanged(() => {
-
-      // })*/
-
+      if(this.userFavorite.includes(conference_id)){
+        this.isFavorite = true
+        console.log('is favorite ',  this.isFavorite , 'conference id ',  conference_id)
+      }else{
+        this.isFavorite = false;
+        console.log('is not favorite ',  this.isFavorite , 'conference id ', conference_id)
+      }
     }
   },
   beforeMount(){
     this.getAllConferences();
-    this.getUserFavorites();
   },
   created() {
     this.getCurrentLoggedInUserID()
     this.getUserName();
+    this.getUserFavorites();
+    this.getAllConferences2();
+
   }
 }
 </script>
